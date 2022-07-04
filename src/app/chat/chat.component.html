@@ -1,1 +1,5 @@
-<p>chat works!</p>
+<div class="messageBox">
+    <div *ngFor="let message of messages$|async" class="chatMessage" [ngClass]="message.senderId ==(user$|async)? 'selfMessage':'otherMessage'">
+        {{message.message}}
+    </div>
+</div>

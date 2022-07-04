@@ -1,16 +1,34 @@
-<div class="d-flex h-80">
-    <div class="flex-3">
+<h2>{{userProfQuery.getUser()|async|json}}</h2>
+<div>
+    <form [formGroup]="nameForm">
+        <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Change your name</mat-label>
+            <input matInput formControlName="name">
+        </mat-form-field>
+        
+    </form>
+    <button (click)="changeName()" mat-stroked-button color="primary">Update name</button>
+</div>
+<div class="row">
+    <div class="col-2">
         <app-user-list></app-user-list>
     </div>
-    <div class="flex-9">
-        <app-chat></app-chat>
+    <div class="col-10">
+        <div>
+            <app-chat></app-chat>
+        </div>
+       
+       <div>
+        <form [formGroup]="messageForm">
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Add text here</mat-label>
+                <input matInput placeholder="Ex. Pizza" formControlName="message">
+            </mat-form-field>
+            <button (click)="sendMessage()">Send</button>
+        </form>
+       </div>
     </div>
 </div>
 <div class="h-20">
-    <form class="example-form">
-        <mat-form-field class="example-full-width" appearance="fill">
-            <mat-label>Add text here</mat-label>
-            <input matInput placeholder="Ex. Pizza">
-        </mat-form-field>
-    </form>
+    
 </div>

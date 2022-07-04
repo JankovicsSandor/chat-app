@@ -1,21 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 
-.d-flex {
-    display: flex;
-}
-
-.flex-3 {
-    flex: 3;
-}
-
-.flex-9 {
-    flex: 9;
-}
-
-.h-80 {
-    height: 80%;
-}
-
-.h-20 {
-    height: 20%;
-}
+html, body {
+    min-height: 100vh;
+    height: auto;
+    overflow: hidden;
+    margin: 0px 8px;
+  }

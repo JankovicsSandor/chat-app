@@ -1,41 +1,60 @@
 import { Injectable } from '@angular/core';
-import { HubConnectionBuilder } from '@microsoft/signalr';
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { ChatService } from '../database/message/chat.service';
+import { UserListMyselfFilterService } from '../database/user-list-myself-filter.service';
+import { UserListService } from '../database/user-list/user-list.service';
+import { User } from '../database/user-list/user.class';
+import { UserProfileService } from '../database/user-profile/user-profile.service';
 
 @Injectable()
 export class HubService {
 
-  constructor() { 
+  private connection:HubConnection;
+  constructor(private userProfileService:UserProfileService,private hubService:UserListService,
+    private userFilterService:UserListMyselfFilterService,private chatService:ChatService) { 
 
-    let connection = new HubConnectionBuilder()
+    this.connection = new HubConnectionBuilder()
     .withUrl("http://localhost:5046/hub")
     .build();
 
-    connection.on("UserConnected", data => {
-        console.log(data);
+    this.connection.on("UserConnected", data => {
+        console.log("User connected: ",data);
+        this.hubService.addNewUser(data as User)
     });
 
-    connection.on("UserConnectionAccepted", data => {
-      console.log(data);
+    this.connection.on("UserConnectionAccepted", data => {
+      this.userProfileService.setProfile(data)
     });
 
-    connection.on("UserList", data => {
-        console.log(data);
+    this.connection.on("UserList", data => {
+        console.log("User list: ",data);
+        this.userFilterService.setFullUserList(data as User[])
     });
 
-    connection.on("UserDisconnected", data => {
-      console.log(data);
+    this.connection.on("UserDisconnected", data => {
+      this.hubService.deleteUser(data as string)
     });
 
-    connection.on("UserNameChanged", data => {
-      console.log(data);
+    this.connection.on("UserNameChanged", data => {
+     this.hubService.updateUser(data.userId,data.newUserName)
     });
 
-    connection.on("ChatMessage", data => {
-      console.log(data);
+    this.connection.on("ChatMessage", data => {
+      this.chatService.addNewMsg(data);
+      console.log("New chat: ",data);
     });
     
 
-    connection.start();
+    this.connection.start();
         //.then(() => connection.invoke("send", "Hello"));
+  }
+
+  changeUserName(newUserName:string){
+    this.connection.invoke("ChangeUserName",newUserName);
+    this.userProfileService.setProfileName(newUserName);
+  }
+
+  sendTextMessage(text: string){
+    this.connection.invoke("SendChatMessage",text);
   }
 }
